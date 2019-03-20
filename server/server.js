@@ -7,6 +7,9 @@ const config = require('./config/config')
 const express = require('express');
 const app = express();
 
+//Mongoose
+const mongoose = require('mongoose');
+
 //Bodyparser
 const bodyParser = require('body-parser');
 
@@ -16,45 +19,23 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-//Peticion get
-app.get('/usuario', function(req, res) {
-    res.json('Hello World')
-});
+//Para poder usar las rutas que estan en user-routes.js
+app.use(require('./routes/user-routes.js'));
+
+//Para usar los scripts
+//app.use(require('./scripts/crear-usuarios.js'));
 
 
-//Peticion post
-app.post('/usuario', function(req, res) {
+//C:\Program Files\MongoDB\Server\4.0\bin
+//Conectamos mongoose con nuestra BD
+//Si la BD no existe la crea
+mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true },
+    (err, res) => {
 
-    //Para esto es necesario tener instalado el body-parser
-    let body = req.body;
+        if (err) throw err;
 
-    if (body.name === undefined) {
-        res.status(400).json({
-            ok: false,
-            message: 'Faltó completar el nombre'
-        });
-    } else {
-        res.json({
-            persona: body
-        });
-    }
-
-});
-
-//Peticion delete
-app.delete('/usuario/:id', function(req, res) {
-    res.json('peticion delete')
-});
-
-//Peticion put
-app.put('/usuario/:id', function(req, res) {
-
-    //Para obtener el parametro que nos llega dentro de la variable id en la url
-    let id = req.params.id;
-    res.json({
-        id
+        console.log("Conexion con la BD establecida");
     });
-});
 
 
 
